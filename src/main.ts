@@ -1,9 +1,4 @@
 import {
-	Editor,
-	MarkdownView,
-	MarkdownFileInfo,
-	Modal,
-	Notice,
 	Plugin,
 } from 'obsidian';
 import {
@@ -11,9 +6,7 @@ import {
 	MinExportSettings,
 	SampleSettingTab as MinExportSettingTab,
 } from './settings';
-import getApplicableFiles from './exportVault';
-
-// Remember to rename these classes and interfaces!
+import {getApplicableFiles, syncGarden} from './exportVault';
 
 export default class MinExportPlugin extends Plugin {
 	settings!: MinExportSettings;
@@ -26,8 +19,9 @@ export default class MinExportPlugin extends Plugin {
 			id: 'export',
 			name: 'Export Garden',
 			callback: () => {
-				const files = getApplicableFiles(this, this.settings)
+				const files = getApplicableFiles(this)
 				console.log(files)
+				syncGarden(this, files)
 			},
 		});
 
