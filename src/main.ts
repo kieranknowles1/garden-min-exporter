@@ -1,4 +1,5 @@
 import {
+	Notice,
 	Plugin,
 } from 'obsidian';
 import {getApplicableFiles, syncGarden} from './exportVault';
@@ -12,6 +13,7 @@ export default class MinExportPlugin extends Plugin {
 			callback: async () =>  {
 				const files = getApplicableFiles(this)
 				await syncGarden(this, files)
+				new Notice(`Exported ${files.length} files`)
 			},
 		});
 	}
