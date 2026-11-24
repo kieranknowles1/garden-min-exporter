@@ -5,6 +5,6 @@
 	"minAppVersion": "1.13.0",
 	"description": "Minimal exporter for a digital garden.",
 	"author": "Kieran Knowles",
-	"authorUrl": "https://selwonk.uk",
+	"authorUrl": "https://github.com/kieranknowles1/garden-min-exporter",
 	"isDesktopOnly": true
 }
