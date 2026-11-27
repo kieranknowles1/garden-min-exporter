@@ -11,9 +11,14 @@ export default class MinExportPlugin extends Plugin {
 			id: 'export',
 			name: 'Export',
 			callback: async () =>  {
-				const files = getApplicableFiles(this)
-				await syncGarden(this, files)
-				new Notice(`Exported ${files.length} files`)
+				try {
+					const files = getApplicableFiles(this)
+					await syncGarden(this, files)
+					new Notice(`Exported ${files.length} files`)
+				} catch (ex) {
+					if (ex instanceof Error)
+						new Notice(ex.message, 0)
+				}
 			},
 		});
 	}

@@ -1,9 +1,11 @@
 import * as fs from "fs/promises"
 
 import MinExportPlugin from "./main";
-import { FileSystemAdapter, TFile } from "obsidian";
+import { TFile } from "obsidian";
 import path from "path";
 import { GARDEN_PATH, TRANSCLUDE_FOLDERS } from "./settings";
+import { getFilesystem } from "./util";
+import { getMtime } from "./git";
 
 export function getApplicableFiles(plugin: MinExportPlugin) {
   const { vault, metadataCache } = plugin.app
@@ -45,15 +47,24 @@ export function getApplicableFiles(plugin: MinExportPlugin) {
 
 export async function syncGarden(plugin: MinExportPlugin, files: TFile[]) {
   const { vault } = plugin.app
-  if (!(vault.adapter instanceof FileSystemAdapter)) return
-  const root = vault.adapter.getBasePath()
+  const filesystem = getFilesystem(vault)
+  const root = filesystem.getBasePath()
   await fs.rm(GARDEN_PATH, { recursive: true })
   await fs.mkdir(GARDEN_PATH)
 
 
   await Promise.all(files.map(async file => {
-    const out = path.join(GARDEN_PATH, file.path)
-    await fs.mkdir(path.dirname(out), { recursive: true })
-    await fs.copyFile(path.join(root, file.path), out)
+    const src = path.join(root, file.path)
+    const dst = path.join(GARDEN_PATH, file.path)
+    await fs.mkdir(path.dirname(dst), { recursive: true })
+
+    if (file.extension == "md") {
+      const mtime = await getMtime(filesystem, file)
+      const data = (await vault.read(file)).replace("publish: true", `modified: ${mtime.toISOString()}`)
+      await fs.writeFile(dst, data)
+    } else {
+      await fs.copyFile(src, dst)
+    }
+
   }))
 }
