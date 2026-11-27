@@ -1,6 +1,4 @@
-import { spawn, spawnSync } from 'child_process'
-import MinExportPlugin from './main'
-import { getFilesystem } from './util'
+import { spawn } from 'child_process'
 import { FileSystemAdapter, TFile } from 'obsidian'
 
 export async function getMtime(filesystem: FileSystemAdapter, file: TFile) {
@@ -11,8 +9,8 @@ export async function getMtime(filesystem: FileSystemAdapter, file: TFile) {
       cwd: root
     })
 
-    var stdout = ""
-    var stderr = ""
+    let stdout = ""
+    let stderr = ""
     proc.stdout.on('data', (data: Buffer) => { stdout += data.toString() })
     proc.stderr.on('data', (data: Buffer) => { stderr += data.toString() })
 
